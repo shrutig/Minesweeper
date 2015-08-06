@@ -1,5 +1,7 @@
 package we;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.Scanner;
 
 public class Game {
@@ -8,15 +10,58 @@ public class Game {
 	int boardHeight, boardWidth;
 
 	public static void main(String args[]) {
+		int flag = 0;
+		int k;
 		Scanner sc = new Scanner(System.in);
 		Game g = new Game();
-		g.playGame(sc);
+		int c[] = new int[2];
+		StringWriter output = new StringWriter();
+		g.createGame(sc, new PrintWriter(output));
+		Player p = new Player();
+		g.cell = 0;
+		p.setScore(g.cell);
+		while (flag == 0) {
+			g.displayGame(p.getScore());
+			k = p.getInputOption(sc);
+			if (k != 1 && k != 2) {
+				System.out.println("invalid input");
+				continue;
+			}
+			c = p.getInputCell(sc, k);
+			if (c[0] > g.boardHeight - 1 || c[0] < 0 || c[1] > g.boardWidth - 1 || c[1] < 0) {
+				System.out.println("invalid input");
+				continue;
+			}
+			flag = g.playGame(k, c);
+			p.setScore(g.cell);
+			if (flag == 1)
+				System.out.println("Mine found: Game lost with score :" + p.getScore());
+			else if (flag == 2) {
+				g.displayGame(p.getScore());
+				System.out.println("All non-mine cells uncovered . Game won with score :" + p.getScore());
+			}
+		}
 		sc.close();
+	}
+
+	public boolean isMine(int row, int col) {
+		if (grid[row][col] == -1)
+			return true;
+		else
+			return false;
+	}
+
+	public boolean isUncovered(int row, int col) {
+		if (grid[row][col] >= 0)
+			return true;
+		else
+			return false;
 	}
 
 	public void displayGame(int score) {
 		int i, j;
-		System.out.println("Welcome to Minesweeper : To win uncover all cells without mine");
+		System.out.println("Welcome to Minesweeper : To win uncover all cells without mines.");
+		System.out.println("The number in each cell denotes number of mines in surrounding 8 cells");
 		System.out.println("\t Game score: " + score);
 		for (i = 0; i < boardHeight; i++) {
 			for (j = 0; j < boardWidth; j++) {
@@ -26,30 +71,42 @@ public class Game {
 					System.out.print("flag" + "\t");
 				else
 					System.out.print("e" + "\t");
-
 			}
 			System.out.println("");
 		}
-
 	}
 
-	public void createGame(Scanner scn) {
+	public void createGame(Scanner scn, PrintWriter output) {
 		int i = 0, j = 0;
 		boardHeight = 0;
 		boardWidth = 0;
 		while (boardHeight <= 0 || boardWidth <= 0) {
-			System.out.println("Enter the board height");
+			 System.out.println("Enter the board height");
+			output.println("Enter the board height");
 			boardHeight = scn.nextInt();
-			System.out.println("Enter the board width");
+			if (boardHeight <= 0) {
+				// System.out.println("invalid input. Enter again");
+				output.println("invalid input. Enter again");
+				continue;
+			}
+			 System.out.println("Enter the board width");
+			output.println("Enter the board width");
 			boardWidth = scn.nextInt();
-			if (boardHeight <= 0 || boardWidth <= 0) {
-				System.out.println("invalid input. Enter again");
+			if (boardWidth <= 0) {
+				output.println("invalid input. Enter again");
+				// System.out.println("invalid input. Enter again");
+				continue;
 			}
 		}
-
 		grid = new int[boardHeight][boardWidth];
+		for (i = 0; i < boardHeight; i++) {
+			for (j = 0; j < boardWidth; j++) {
+				grid[i][j] = -2;
+			}
+		}
 		while (!(i == -1 && j == -1)) {
-			System.out.println("Enter the mine: row col or -1 -1 to exit");
+			 System.out.println("Enter the mine: row col or -1 -1 to exit");
+			output.println("Enter the mine: row col or -1 -1 to exit");
 			i = scn.nextInt();
 			j = scn.nextInt();
 			if (i >= 0 && i < boardHeight && j >= 0 && j < boardWidth) {
@@ -57,75 +114,49 @@ public class Game {
 			} else if (i == -1 && j == -1) {
 				break;
 			} else {
-				System.out.println("invalid input");
+				// System.out.println("invalid input");
+				output.println("invalid input");
 			}
-		}
-		for (i = 0; i < boardHeight; i++) {
-			for (j = 0; j < boardWidth; j++) {
-				if (grid[i][j] != -1) {
-					grid[i][j] = -2;
-				}
-			}
-
 		}
 
 	}
 
-	public void playGame(Scanner sc) {
-		boolean flag = true, flag1 = false;
-		int i, j, k;
-		Player p = new Player();
-		cell = 0;
-		p.setScore(cell);
-		createGame(sc);
-
-		while (flag && !flag1) {
-			displayGame(p.getScore());
-			System.out.println("Enter 1 to uncover cell or 2 to flag cell");
-			k = sc.nextInt();
-			if (k != 1 && k != 2) {
-				System.out.println("invalid input");
-				continue;
-			}
-			int c[] = p.getInput(sc, k);
-			if (c[0] > boardHeight - 1 || c[0] < 0 || c[1] > boardWidth - 1 || c[1] < 0) {
-				System.out.println("invalid input");
-				continue;
-			}
-
-			if (k == 1) {
-
-				if (grid[c[0]][c[1]] == -1) {
-					flag = false;
-					System.out.println("Mine found: Game lost with score :" + p.getScore());
-				} else if (grid[c[0]][c[1]] == -2) {
-					uncoverCells(c[0], c[1]);
-					p.setScore(cell);
-					flag1 = true;
-					for (i = 0; i < boardHeight; i++) {
-						for (j = 0; j < boardWidth; j++) {
-							if (grid[i][j] == -2)
-								flag1 = false;
-						}
+	public int playGame(int k, int c[]) {
+		int flag = 0;
+		boolean flag1;
+		int i, j;
+		if (k == 1) {
+			if (isMine(c[0], c[1])) {
+				flag = 1;
+			} else if (grid[c[0]][c[1]] == -2) {
+				uncoverCells(c[0], c[1]);
+				flag1 = true;
+				for (i = 0; i < boardHeight; i++) {
+					for (j = 0; j < boardWidth; j++) {
+						if (grid[i][j] == -2 || grid[i][j] == -3)
+							flag1 = false;
 					}
-					if (flag1) {
-						displayGame(p.getScore());
-						System.out.println("All non-mine cells uncovered . Game won with score :" + p.getScore());
-					}
-				} else if (grid[c[0]][c[1]] == -3) {
-					grid[c[0]][c[1]] = -2;
 				}
-				else{
-					System.out.println("This cell has already been uncovered");
+				if (flag1) {
+					flag = 2;
 				}
+			} else if (grid[c[0]][c[1]] == -3) {
+				grid[c[0]][c[1]] = -2;
+				flag = 0;
 			} else {
-				if (grid[c[0]][c[1]] == -2 || grid[c[0]][c[1]] == -1)
-					grid[c[0]][c[1]] = -3;
-				else
-					System.out.println(
-							"Flag cannot be placed in the cell indicated as already uncovered or flag present");
+				System.out.println("This cell has already been uncovered");
+				flag = 0;
+			}
+		} else {
+			if (grid[c[0]][c[1]] == -2 || grid[c[0]][c[1]] == -1) {
+				grid[c[0]][c[1]] = -3;
+				flag = 0;
+			} else {
+				System.out.println("Flag cannot be placed in the cell indicated as already uncovered or flag present");
+				flag = 0;
 			}
 		}
+		return flag;
 	}
 
 	public void uncoverCells(int row, int col) {
