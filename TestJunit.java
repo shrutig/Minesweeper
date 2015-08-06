@@ -14,8 +14,9 @@ public class TestJunit {
 	@Before
 	public void TestCreateGame() {
 		StringWriter output = new StringWriter();
-		String input = "-1\n" // "Wrong number, try again."
-				+ "6\n" + "6\n" + "1 1\n" // Enter the mine: row col or -1 -1 to
+		String input = "-1\n"+"5\n" // "Invalid number. Enter again."
+				+ "6\n" + "6\n" //Enter boardWidth and boardHeight
+				+ "1 1\n" // Enter the mine: row col or -1 -1 to
 											// exit
 				+ "3 1\n" + "-1 -1\n";
 		g.createGame(new Scanner(input), new PrintWriter(output));
