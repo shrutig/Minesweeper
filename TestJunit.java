@@ -14,10 +14,10 @@ public class TestJunit {
 	@Before
 	public void TestCreateGame() {
 		StringWriter output = new StringWriter();
-		String input = "-1\n"+"5\n" // "Invalid number. Enter again."
-				+ "6\n" + "6\n" //Enter boardWidth and boardHeight
+		String input = "-1\n" + "5\n" // "Invalid number. Enter again."
+				+ "6\n" + "6\n" // Enter boardWidth and boardHeight
 				+ "1 1\n" // Enter the mine: row col or -1 -1 to
-											// exit
+							// exit
 				+ "3 1\n" + "-1 -1\n";
 		g.createGame(new Scanner(input), new PrintWriter(output));
 		assertTrue("Mine not located properly", g.isMine(1, 1));// returns error
@@ -35,21 +35,30 @@ public class TestJunit {
 	@Test
 	public void TestPlayGame1() {
 		int c[] = { 1, 1 };
-		int flag = g.playGame(1, c);
-		assertTrue("Game not over at proper time", flag == 1);// returns error
-																// if game not
-																// over
+		int gameStat = g.playGame(1, c);
+		assertTrue("Game not over at proper time", gameStat == 1);// returns
+																	// error
+																	// if game
+																	// not
+																	// over
 
 	}
 
 	@Test
 	public void TestPlayGame2() {
 		int c[] = { 1, 2 };
-		int flag = g.playGame(2, c);
+		int gameStat = g.playGame(2, c);
 		c[1] = 1;
-		assertTrue("Flag not placed", flag == 0);// returns error if flag not
-													// placed
-
+		assertTrue("Game not functioning properly", gameStat == 0);// returns
+																	// error if
+																	// game not
+																	// functioning
+																	// properly
+		assertTrue("Flag not placed", g.isFlag(1, 2));// returns error if flag
+														// not
+														// placed
+		gameStat = g.playGame(1, c);
+		assertTrue("Flag not placed", gameStat == 1);
 	}
 
 	@Test
