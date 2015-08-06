@@ -23,7 +23,8 @@ public class Game {
 		p.setScore(0);
 		while (gameEnder == 0) {
 			g.displayGame(p.getScore());
-			k = p.getInputOption(sc);
+			k = p.getInputOption(sc);// stores 1 if user wants to uncover cell
+										// or 2 if user wants to place a flag
 			c = p.getInputCell(sc, k, g.boardHeight, g.boardWidth);
 			gameEnder = g.playGame(k, c);
 			p.setScore(p.getScore() + 1);
@@ -73,6 +74,10 @@ public class Game {
 		grid[row][col] = -1;
 	}
 
+	public void setCover(int row, int col) {
+		grid[row][col] = -2;
+	}
+
 	public void displayGame(int score) {
 		int i, j;
 		System.out.println("Welcome to Minesweeper : To win uncover all cells without mines.");
@@ -96,11 +101,8 @@ public class Game {
 		boardHeight = 0;
 		boardWidth = 0;
 		while (boardHeight <= 0 || boardWidth <= 0) {
-			System.out.println("Enter the board height");
-			output.println("Enter the board height");
+			System.out.println("Enter the board height follwed by board Width in the next line");
 			boardHeight = scn.nextInt();
-			System.out.println("Enter the board width");
-			output.println("Enter the board width");
 			boardWidth = scn.nextInt();
 			if (boardWidth <= 0 || boardHeight <= 0) {
 				output.println("invalid input. Enter again");
@@ -110,12 +112,11 @@ public class Game {
 		grid = new int[boardHeight][boardWidth];
 		for (i = 0; i < boardHeight; i++) {
 			for (j = 0; j < boardWidth; j++) {
-				grid[i][j] = -2;
+				setCover(i, j);
 			}
 		}
 		while (!(i == -1 && j == -1)) {
 			System.out.println("Enter the mine: row col format(starting from 0) or -1 -1 to exit");
-			output.println("Enter the mine: row col or -1 -1 to exit");
 			i = scn.nextInt();
 			j = scn.nextInt();
 			if (isValid(i, j)) {
@@ -133,7 +134,7 @@ public class Game {
 		int gameStatus = 0;
 		boolean WinStatus;
 		int i, j;
-		if (k == 1) {
+		if (k == 1) {// to uncover cell
 			if (isMine(c[0], c[1])) {
 				gameStatus = 1;
 			} else if (isCovered(c[0], c[1])) {
@@ -149,13 +150,13 @@ public class Game {
 					gameStatus = 2;
 				}
 			} else if (isFlag(c[0], c[1])) {
-				grid[c[0]][c[1]] = -2;
+				setCover(c[0], c[1]);
 				gameStatus = 0;
 			} else {
 				System.out.println("This cell has already been uncovered");
 				gameStatus = 0;
 			}
-		} else {
+		} else {// to flag cell
 			if (isCovered(c[0], c[1]) || isMine(c[0], c[1])) {
 				setFlag(c[0], c[1]);
 				gameStatus = 0;
