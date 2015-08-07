@@ -12,24 +12,23 @@ public class Game {
 	public static void main(String args[]) {
 		int gameEnder = 0;// stores 1 if game ended with loss, 2 if game ended
 							// with win and 0 if incomplete
-		int k;
+		int choice;
 		int c[] = new int[2];
-		
-		GameBoard gameBoard = new GameBoard();
-		Player p = new Player();
 		Scanner sc = new Scanner(System.in);	
 		StringWriter output = new StringWriter();
 		
+		GameBoard gameBoard = new GameBoard();
+		Player p = new Player();		
 		gameBoard.createGameBoard(sc, new PrintWriter(output));	
 		Game g = new Game();
 		p.setScore(0);
 		
 		while (gameEnder == 0) {
 			gameBoard.displayGameBoard(p.getScore());
-			k = p.getInputOption(sc);// stores 1 if user wants to uncover cell
+			choice = p.getInputOption(sc);// stores 1 if user wants to uncover cell
 										// or 2 if user wants to place a flag
-			c = p.getInputCell(sc, k, gameBoard.boardHeight, gameBoard.boardWidth);
-			gameEnder = g.playGame(k, c[0],c[1],gameBoard);
+			c = p.getInputCell(sc, choice, gameBoard.boardHeight, gameBoard.boardWidth);
+			gameEnder = g.playGame(choice, c[0],c[1],gameBoard);
 			p.setScore(p.getScore() + 1);
 			if (gameEnder == 1)
 				System.out.println("Mine found: Game lost with score :" + p.getScore());
@@ -41,13 +40,11 @@ public class Game {
 		sc.close();
 	}
 
-	
-
-	public int playGame(int k, int row,int col,GameBoard gameBoard) {
+	public int playGame(int choice, int row,int col,GameBoard gameBoard) {
 		int gameStatus = 0;
 		boolean WinStatus;
 		int i, j;
-		if (k == 1) {// to uncover cell
+		if (choice == 1) {// to uncover cell
 			if (gameBoard.isMine(row, col)) {
 				gameStatus = 1;
 			} else if (gameBoard.isCovered(row, col)) {
@@ -80,7 +77,4 @@ public class Game {
 		}
 		return gameStatus;
 	}
-
-	
-	
 }

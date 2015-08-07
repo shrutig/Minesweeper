@@ -38,7 +38,7 @@ public class TestJunit {
 	public void testPlayGame1() {
 		int row=1,col=1;
 		int gameStat = g.playGame(1, row,col,gameBoard);
-		assertTrue("Game not over at proper time", gameStat == 1);// returns
+		assertTrue("Game not over when required", gameStat == 1);// returns
 																	// error
 																	// if game
 																	// not
