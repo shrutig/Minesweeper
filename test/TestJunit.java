@@ -1,28 +1,35 @@
-
+package com.tuplejump.inventorymanagement;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Scanner;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 public class TestJunit {
 	Game g = new Game();
     GameBoard gameBoard = new GameBoard();
+	private ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+    PrintStream original = System.out;
 	@Before
 	public void testCreateGame() {
-		StringWriter output = new StringWriter();
+		System.setOut(new PrintStream(outContent));
+		//StringWriter output = new StringWriter();
 		String input = "-1\n" + "5\n" // "Invalid number. Enter again."
 				+ "6\n" + "6\n" // Enter boardWidth and boardHeight
 				+ "1 1\n" // Enter the mine: row col or -1 -1 to
 							// exit
 				+ "3 1\n" + "-1 -1\n";
-		gameBoard.createGameBoard(new Scanner(input), new PrintWriter(output));
-		assertTrue("Mine not located properly", gameBoard.isMine(1, 1));// returns error
+        gameBoard.createGameBoard(new Scanner(input));
+
+        assertTrue("Mine not located properly", gameBoard.isMine(1, 1));// returns error
 																// if mine not
 																// located on
 																// board
@@ -31,7 +38,7 @@ public class TestJunit {
 																	// error if
 																	// cell is a
 																	// mine
-		assertTrue("Invalid input not considered", (output.toString()).contains("invalid input"));
+		assertTrue("Invalid input not considered", (outContent.toString()).contains("invalid input"));
 	}
 
 	@Test
@@ -78,5 +85,10 @@ public class TestJunit {
 		assertTrue("Cells not uncovered properly", gameBoard.isUncovered(0, 4));
 		assertTrue("Cells not uncovered properly", gameBoard.isUncovered(5, 3));
 
+	}
+
+    @After
+	public void closePrint() {
+        System.setOut(original);
 	}
 }

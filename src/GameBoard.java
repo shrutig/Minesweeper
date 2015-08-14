@@ -1,4 +1,4 @@
-
+package com.tuplejump.inventorymanagement;
 
 import java.io.PrintWriter;
 
@@ -124,7 +124,7 @@ public class GameBoard {
 		}
 	}
 
-	public void createGameBoard(Scanner scn, PrintWriter output) {
+	public void createGameBoard(Scanner scn) {
 		int i = 0, j = 0;
 		boardHeight = 0;
 		boardWidth = 0;
@@ -133,7 +133,7 @@ public class GameBoard {
 			boardHeight = scn.nextInt();
 			boardWidth = scn.nextInt();
 			if (boardWidth <= 0 || boardHeight <= 0) {
-				output.println("invalid input. Enter again");
+				//output.println("invalid input. Enter again");
 				System.out.println("invalid input. Enter again");
 			}
 		}
@@ -153,7 +153,7 @@ public class GameBoard {
 				break;
 			} else {
 				System.out.println("invalid input");
-				output.println("invalid input");
+				//output.println("invalid input");
 			}
 		}
 	}

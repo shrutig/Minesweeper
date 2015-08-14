@@ -1,4 +1,4 @@
-
+package com.tuplejump.inventorymanagement;
 
 import java.util.Scanner;
 

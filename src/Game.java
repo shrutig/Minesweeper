@@ -1,4 +1,4 @@
-
+package com.tuplejump.inventorymanagement;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -19,7 +19,7 @@ public class Game {
 		
 		GameBoard gameBoard = new GameBoard();
 		Player p = new Player();		
-		gameBoard.createGameBoard(sc, new PrintWriter(output));	
+		gameBoard.createGameBoard(sc);
 		Game g = new Game();
 		p.setScore(0);
 		
