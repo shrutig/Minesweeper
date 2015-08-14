@@ -1,4 +1,4 @@
-package we;
+
 
 import java.io.PrintWriter;
 
